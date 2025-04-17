@@ -1120,10 +1120,19 @@ H.builtin_surroundings = {
     end,
   },
   -- Brackets
-  ['b'] = { input = { { '%b()', '%b[]', '%b{}' }, '^.().*().$' }, output = { left = '(', right = ')' } },
+  ['b'] = { input = { { '%b<>', '%b()', '%b[]', '%b{}' }, '^.().*().$' }, output = { left = '(', right = ')' } },
+  -- Template usage
+  ['T'] = {
+    input = { '%f[%w_%.:<>][%w_%.:<>]+!?%b<>', '^.-%(().*()%)$' },
+    output = function()
+      local template_name = MiniSurround.user_input('Template name')
+      if template_name == nil then return nil end
+      return { left = ('%s('):format(template_name), right = ')' }
+    end,
+  },
   -- Function call
   ['f'] = {
-    input = { '%f[%w_%.][%w_%.]+%b()', '^.-%(().*()%)$' },
+    input = { '%f[%w_%.:<>][%w_%.:<>]+!?%b()', '^.-%(().*()%)$' },
     output = function()
       local fun_name = MiniSurround.user_input('Function name')
       if fun_name == nil then return nil end
